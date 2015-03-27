@@ -16,6 +16,11 @@
 % Possible changes: no linear interpolation: just keep same value until
 % changed.
 % 
+% nov62011pairs = {'EURUSD','GBPUSD','USDCHF','USDJPY','EURGBP','EURCHF', ...
+%     'EURJPY','GBPCHF','GBPJPY','CHFJPY','USDCAD','EURCAD','AUDUSD', ...
+%     'AUDJPY','NZDUSD','NZDJPY','XAUUSD','XAGUSD','USDCZK','USDDKK', ...
+%     'EURRUB','USDHUF','USDNOK','USDPLN','USDRUB','USDSEK','USDSGD','USDZAR'};
+% 
 %
 % Created by: Scott Cole
 % Copyright (c) 2014
@@ -25,14 +30,11 @@ clear
 clc
 close all
 
-num_days =312; %312 - numminutes should be 371280 (actual 370590, 690 diff)
-nov62011pairs = {'EURUSD','GBPUSD','USDCHF','USDJPY','EURGBP','EURCHF', ...
-    'EURJPY','GBPCHF','GBPJPY','CHFJPY','USDCAD','EURCAD','AUDUSD', ...
-    'AUDJPY','NZDUSD','NZDJPY','XAUUSD','XAGUSD','USDCZK','USDDKK', ...
-    'EURRUB','USDHUF','USDNOK','USDPLN','USDRUB','USDSEK','USDSGD','USDZAR'};
-v = 2;
-manual_pairs = 0;
+% User input
+num_days = 12; %312 - numminutes should be 371280 (actual 370590, 690 diff)
+out_finame = 'fxdata';
 
+% Convert data from .txt to a cell array
 for d = 1:num_days
     fprintf('%d\n',d)
     filename = strcat('fxday',num2str(d));
@@ -44,8 +46,8 @@ for d = 1:num_days
     
     %split up data by currency
     data_times(data_times==0)=240000;
-    [pks,locs]=findpeaks(data_times);
-    bounds = [0; locs; length(data_times)];
+    locs = findpeaks(data_times);
+    bounds = [0; locs.loc; length(data_times)];
     for b = 2:length(bounds)
         interval = bounds(b-1)+1:bounds(b);
         data2{d,b-1} = [data_times(interval), data1(interval)];
@@ -65,43 +67,44 @@ for d = 1:num_days
     end
 end
 
-%Check to see if the currency pairs in the first day were the same as the last
-%day
-pairs_first = pairs(1,:);
-pairs_last = pairs(end,:);
-for i=1:length(pairs_last)
-    if pairs_first{i}~=pairs_last{i}
-        fprintf('ERROR: The currency pairs in the data are not the same each day.')
-        pause
-        manual_pairs=1;
-    end
-end
-
-%sort data manually by looking at each currency pair
-if manual_pairs
-    allpairs = pairs(1,:);
-    for d=1:size(data3,1)
-        day_pairs = pairs(d,:);
-        day_pairs = day_pairs(~cellfun('isempty',day_pairs));
-        for c=1:length(day_pairs)
-            for k = 1:length(allpairs)
-                if day_pairs{c}==allpairs{k}
-                    data4{d,k} = data3{d,c};
-                end
-            end
-        end
-    end
-else
-    data4=data3;
-end
+% %Check to see if the currency pairs in the first day were the same as the last
+% %day
+% pairs_first = pairs(1,:);
+% pairs_last = pairs(end,:);
+% for i=1:length(pairs_last)
+%     if pairs_first{i}~=pairs_last{i}
+%         fprintf('ERROR: The currency pairs in the data are not the same each day.')
+%         pause
+%         manual_pairs=1;
+%     end
+% end
+%
+% %sort data manually by looking at each currency pair
+% if manual_pairs
+%     allpairs = pairs(1,:);
+%     for d=1:size(data3,1)
+%         day_pairs = pairs(d,:);
+%         day_pairs = day_pairs(~cellfun('isempty',day_pairs));
+%         for c=1:length(day_pairs)
+%             for k = 1:length(allpairs)
+%                 if day_pairs{c}==allpairs{k}
+%                     data4{d,k} = data3{d,c};
+%                 end
+%             end
+%         end
+%     end
+% else
+%     data4=data3;
+% end
         
-pairs = pairs_first;
+pairs = pairs(1,:);
 
 %Replace data3 cell matrix with a matrix with continuous data
 total_minutes = 0;
 for d=1:num_days
     total_minutes = total_minutes + length(data3{d,1});
 end
+
 fxdata = zeros(total_minutes,length(pairs{1,1}));
 current_minute = 0;
 for d=1:num_days
@@ -112,6 +115,4 @@ for d=1:num_days
     current_minute = current_minute + length(data3{d,c});
 end
 
-
-filename = strcat('forexite_',num2str(v));
-save(filename,'fxdata','time_vector','date_vector','pairs')
+save(out_finame,'fxdata','time_vector','date_vector','pairs')
