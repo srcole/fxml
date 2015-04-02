@@ -21,10 +21,11 @@ dates_str = np.zeros(len(dates),dtype=object)
 for d in range(len(dates)):
     dates_str[d] = str(dates[d,0]) + '-' + str(dates[d,1]) + '-' + str(dates[d,2])
 
-
 # Plot EUR/USD
 EURUSD_idx = 0
 t = np.arange(dates_tend[-1])
 plt.figure()
 plt.plot(t, all_data[EURUSD_idx,:])
 plt.xticks(dates_tstart,dates_str)
+plt.xlabel('Date')
+plt.ylabel('EURUSD')

@@ -3,17 +3,18 @@ NOTE: only currency pairs present in the first data file will be collected"""
 
 import numpy as np
 import scipy as sp
+from scipy import signal
 import h5py
 
 # User input
-D = 5 # User declare # text files (numbered) scraped from forexite
+D = 29 # User declare # text files (numbered) scraped from forexite
 fipath = 'C:\\gh\\fxdata\\' # Default output filepath and name in scrape_forexite.py
 
 # Determine number of currency pairs
 tempdata = np.loadtxt(fipath + 'd0.txt',dtype=np.str,delimiter=',')
 tempt = tempdata[1:,2].astype(np.int)
 tempt[tempt == 0] = 240000
-curbound = np.append(0,sp.signal.argrelmax(tempt)[0]+1)
+curbound = np.append(0,signal.argrelmax(tempt)[0]+1)
 P = len(curbound)
 
 # Convert data from .txt to arrays
