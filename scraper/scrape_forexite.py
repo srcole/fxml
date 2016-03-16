@@ -27,9 +27,9 @@ def num2date(num):
     return date
 
 # User-specified range of data to download
-start_date = [29, 6, 2014]  # date, month, year
-end_date = [2, 8, 2014]  # date, month, year
-filedest = 'C:\\gh\\fxdata\\'  # destination directory for the data
+start_date = [1, 1, 2015]  # date, month, year
+end_date = [31, 12, 2015]  # date, month, year
+filedest = 'C:/gh/data/fx/2015 days/'  # destination directory for the data
 
 # Define variables for looping through each day
 years = range(start_date[2], end_date[2] + 1)
@@ -61,7 +61,10 @@ for y in years:
         elif m == min(months):
             dates = range(start_date[0], maxD)
         elif m == max(months):
-            dates = range(1, end_date[0] + 1)
+            if y == max(years):
+                dates = range(1, end_date[0] + 1)
+            else:
+                dates = range(1, maxD)
         else:
             dates = range(1, maxD)
 

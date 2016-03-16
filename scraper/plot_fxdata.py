@@ -6,12 +6,12 @@ import h5py
 
 # User input
 # Default output filepath and name in scrape_forexite.py
-fipath = 'C:\\gh\\fxdata\\'
-finame = fipath + 'format_fxdata.hdf5'
+fipath = 'C:/gh/data/fx/format/'
+finame = fipath + '2010_01.hdf5'
 
 # Import data
 with h5py.File(finame, 'r') as fi:
-    all_data = fi['all_data'][:]
+    opens = fi['opens'][:]
     dates_tstart = fi['dates_tstart'][:]
     dates_tend = fi['dates_tend'][:]
     dates = fi['dates'][:]
@@ -27,7 +27,7 @@ for d in range(len(dates)):
 EURUSD_idx = 0
 t = np.arange(dates_tend[-1])
 plt.figure()
-plt.plot(t, all_data[EURUSD_idx, :])
+plt.plot(t, opens[EURUSD_idx, :])
 plt.xticks(dates_tstart, dates_str)
 plt.xlabel('Date')
 plt.ylabel('EURUSD')
