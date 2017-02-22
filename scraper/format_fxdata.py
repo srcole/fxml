@@ -7,6 +7,9 @@ from scipy import signal
 import h5py
 
 def interpfx(time,fx,time_pre):
+    """
+    Because I didn't know pandas library was a thing.
+    """
     opens = np.zeros(len(time))
     f = sp.interpolate.interp1d(time_pre, fx)
     
@@ -23,10 +26,11 @@ def interpfx(time,fx,time_pre):
     return opens
 
 # User input
-D = 311  # User declare # text files (numbered) scraped from forexite
+D = 312  # User declare # text files (numbered) scraped from forexite
 dataname = '2011'
 # Default output filepath and name in scrape_forexite.py
-fipath = 'C:/gh/data/fx/2011days/'
+fipath = 'C:/gh/data/fx/2011 days/'
+fipath2 = 'C:/gh/data/fx/format/'
 
 # Determine number of currency pairs
 tempdata = np.loadtxt(fipath + 'd0.txt', dtype=np.str, delimiter=',')
@@ -120,7 +124,7 @@ for d in range(D):
         all_data['closes'][p, dates_tstart[d]:dates_tend[d]] = closes[p, d]
 
 # Save with h5py
-finame = fipath + dataname + '.hdf5'
+finame = fipath2 + dataname + '.hdf5'
 with h5py.File(finame, 'w') as fi:
     fi['opens'] = all_data['opens']
     fi['highs'] = all_data['highs']
